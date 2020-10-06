@@ -1,7 +1,6 @@
-
 #include "can_simple.hpp"
 #include <odrive_main.h>
-
+#include <low_level.h>
 #include <cstring>
 
 static const uint8_t NUM_NODE_ID_BITS = 4;
@@ -188,7 +187,7 @@ void CANSimple::handle_can_message(can_Message_t& msg) {
     }
 
     // Do ADC sample store
-    adc_samples[adc_sample_count++] = odrv.get_adc_voltage(5); //get_gpio_port_by_pin(5), get_gpio_pin_by_pin(5));
+    adc_samples[adc_sample_count++] = get_adc_voltage_channel(14);
     if (adc_sample_count >= num_adc_samples)
         adc_sample_count = 0;
 }
@@ -500,8 +499,10 @@ void CANSimple::get_adc_voltage_callback(Axis* axis, can_Message_t& msg) {
         //for (int i = 0; i++; i < 20)
         //    sorted_adc_samples[i] = Encoder::adc_samples[i];
         
-        qsort(adc_samples, num_adc_samples, sizeof(float), compare );
+       qsort(adc_samples, num_adc_samples, sizeof(float), compare );
 
+        //  {GPIOC, GPIO_PIN_4}, // GPIO5 channel = 14
+        //float adc_in_voltage = get_adc_voltage_channel(14);
         float adc_in_voltage = adc_samples[num_adc_samples/2]; //get_adc_voltage(get_gpio_port_by_pin(gpio_num_in), get_gpio_pin_by_pin(gpio_num_in));
 
         uint32_t floatBytes;
