@@ -56,6 +56,37 @@ static void can_server_thread_wrapper(void *ctx) {
 bool ODriveCAN::start_can_server() {
     HAL_StatusTypeDef status;
 
+    get_gpio(7).config(GPIO_MODE_INPUT, GPIO_PULLUP);
+    get_gpio(8).config(GPIO_MODE_INPUT, GPIO_PULLUP);
+    
+    // Set can_node_id based on GPIO 7 & 8
+    GPIO_PinState gpio_7_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15);
+    GPIO_PinState gpio_8_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3);
+
+    uint32_t hw_read_odrive_id = (gpio_7_state << 1) | gpio_8_state;
+    switch (hw_read_odrive_id)
+    {
+        case 0:
+            axes[0].config_.can_node_id = 1;
+            axes[1].config_.can_node_id = 2;
+            break;
+
+        case 1:
+            axes[0].config_.can_node_id = 3;
+            axes[1].config_.can_node_id = 4;
+            break;
+
+        case 2:
+            axes[0].config_.can_node_id = 5;
+            axes[1].config_.can_node_id = 6;
+            break;
+
+        case 3:
+        default:
+            axes[0].config_.can_node_id = 7;
+            axes[1].config_.can_node_id = 8;
+            break;
+    }
     set_baud_rate(config_.baud_rate);
 
     status = HAL_CAN_Init(handle_);
