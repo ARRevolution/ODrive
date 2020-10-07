@@ -619,6 +619,9 @@ void CANSimple::set_config_control_3_callback(Axis* axis, can_Message_t& msg)
 void CANSimple::set_config_global_callback(Axis* axis, can_Message_t& msg)
 {
     odrv.config_.brake_resistance = can_getSignal<float>(msg, 0, 32, true, 1, 0);
+    odrv.config_.max_regen_current = can_getSignal<int8_t>(msg, 32, 8, true, 1, 0);
+    odrv.config_.dc_max_positive_current = can_getSignal<int8_t>(msg, 40, 8, true, 1, 0);
+    odrv.config_.dc_max_negative_current = can_getSignal<int8_t>(msg, 48, 8, true, 1, 0);
 }
 
 void CANSimple::set_pre_cal_callback(Axis* axis, can_Message_t& msg)
