@@ -40,6 +40,10 @@ size_t oscilloscope_pos = 0;
 
 void init_communication(void) {
     printf("hi!\r\n");
+    
+    // Set can_node_id based on GPIO 7 & 8 - needs delay before reading state so placed here.
+    get_gpio(7).config(GPIO_MODE_INPUT, GPIO_PULLUP);
+    get_gpio(8).config(GPIO_MODE_INPUT, GPIO_PULLUP);
 
     if (odrv.config_.enable_uart0 && uart0) {
         start_uart_server();
