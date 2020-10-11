@@ -347,7 +347,7 @@ void CANSimple::get_encoder_count_callback(Axis* axis, can_Message_t& msg) {
 }
 
 void CANSimple::move_to_pos_callback(Axis* axis, can_Message_t& msg) {
-    axis->controller_.move_to_pos(can_getSignal<int32_t>(msg, 0, 32, true, 1, 0));
+    axis->controller_.move_to_pos(can_getSignal<float>(msg, 0, 32, true, 1, 0));
 }
 
 void CANSimple::set_pos_setpoint_callback(Axis* axis, can_Message_t& msg) {
@@ -560,12 +560,12 @@ void CANSimple::get_inverter_temp_callback(Axis* axis, can_Message_t& msg)
 
 void CANSimple::set_config_callback(Axis* axis, can_Message_t& msg)
 {
-    axis->config_.can_heartbeat_rate_ms = can_getSignal<uint32_t>(msg, 0, 32, true, 1, 0);
+    axis->config_.can_heartbeat_rate_ms = can_getSignal<uint32_t>(msg, 0, 32, true);
 }
 
 void CANSimple::set_config_motor_1_callback(Axis* axis, can_Message_t& msg)
 {
-    axis->motor_.config_.pole_pairs = can_getSignal<int32_t>(msg, 0, 32, true, 1, 0);
+    axis->motor_.config_.pole_pairs = can_getSignal<int32_t>(msg, 0, 32, true);
     axis->motor_.config_.resistance_calib_max_voltage = can_getSignal<float>(msg, 32, 32, true, 1, 0);
 }
 
@@ -594,7 +594,7 @@ void CANSimple::set_config_encoder_1_callback(Axis* axis, can_Message_t& msg)
 
 void CANSimple::set_config_encoder_2_callback(Axis* axis, can_Message_t& msg)
 {
-    axis->encoder_.config_.cpr = can_getSignal<int32_t>(msg, 0, 32, true, 1, 0);
+    axis->encoder_.config_.cpr = can_getSignal<int32_t>(msg, 0, 32, true);
     axis->encoder_.config_.bandwidth = can_getSignal<float>(msg, 32, 32, true, 1, 0);
 }
 
