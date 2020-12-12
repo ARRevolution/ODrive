@@ -248,6 +248,7 @@ public:
     LockinState lockin_state_ = LOCKIN_STATE_INACTIVE;
     Homing_t homing_;
     uint32_t last_heartbeat_ = 0;
+    uint32_t last_sample_pos_pot_ = 0;
 
     // watchdog
     uint32_t watchdog_current_value_= 0;

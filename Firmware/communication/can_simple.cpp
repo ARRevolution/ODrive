@@ -185,11 +185,15 @@ void CANSimple::handle_can_message(can_Message_t& msg) {
                 break;
         }
     }
+}
 
+void CANSimple::sample_pot_pos()
+{
     // Do ADC sample store
     adc_samples[adc_sample_count++] = get_adc_voltage_channel(14);
     if (adc_sample_count >= num_adc_samples)
         adc_sample_count = 0;
+
 }
 
 void CANSimple::nmt_callback(Axis* axis, can_Message_t& msg) {
