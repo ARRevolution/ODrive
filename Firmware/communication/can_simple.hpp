@@ -72,7 +72,9 @@ class CANSimple {
     static void get_encoder_count_callback(Axis* axis, can_Message_t& msg);
     static void move_to_pos_callback(Axis* axis, can_Message_t& msg);
     static void set_pos_setpoint_callback(Axis* axis, can_Message_t& msg);
+    static void get_pos_setpoint_callback(Axis* axis, can_Message_t& msg);
     static void set_vel_setpoint_callback(Axis* axis, can_Message_t& msg);
+    static void get_vel_setpoint_callback(Axis* axis, can_Message_t& msg);
     static void set_torque_setpoint_callback(Axis* axis, can_Message_t& msg);
     static void set_vel_limit_callback(Axis* axis, can_Message_t& msg);
     static void start_anticogging_callback(Axis* axis, can_Message_t& msg);

@@ -84,9 +84,11 @@ void CANSimple::handle_can_message(can_Message_t& msg) {
                 break;
             case MSG_SET_POS_SETPOINT:
                 set_pos_setpoint_callback(axis, msg);
+                get_pos_setpoint_callback(axis, msg);
                 break;
             case MSG_SET_VEL_SETPOINT:
                 set_vel_setpoint_callback(axis, msg);
+                get_vel_setpoint_callback(axis, msg);
                 break;
             case MSG_SET_TORQUE_SETPOINT:
                 set_torque_setpoint_callback(axis, msg);
@@ -361,9 +363,47 @@ void CANSimple::set_pos_setpoint_callback(Axis* axis, can_Message_t& msg) {
     axis->controller_.input_pos_updated();
 }
 
+void CANSimple::get_pos_setpoint_callback(Axis* axis, can_Message_t& msg) {
+    can_Message_t txmsg;
+    txmsg.id = axis->config_.can_node_id;
+    txmsg.id += MSG_SET_POS_SETPOINT << NUM_NODE_ID_BITS;
+    txmsg.isExt = axis->config_.can_node_id_extended;
+    txmsg.len = 8;
+
+    uint32_t floatBytes;
+    static_assert(sizeof axis->controller_.input_pos_ == sizeof floatBytes);
+    std::memcpy(&floatBytes, &axis->controller_.input_pos_, sizeof floatBytes);
+
+    txmsg.buf[0] = floatBytes;
+    txmsg.buf[1] = floatBytes >> 8;
+    txmsg.buf[2] = floatBytes >> 16;
+    txmsg.buf[3] = floatBytes >> 24;
+
+    odCAN->write(txmsg);
+}
+
 void CANSimple::set_vel_setpoint_callback(Axis* axis, can_Message_t& msg) { // 0.1f??
     axis->controller_.input_vel_ = can_getSignal<float>(msg, 0, 32, true);
     axis->controller_.input_torque_ = can_getSignal<float>(msg, 32, 32, true);
+}
+
+void CANSimple::get_vel_setpoint_callback(Axis* axis, can_Message_t& msg) {
+    can_Message_t txmsg;
+    txmsg.id = axis->config_.can_node_id;
+    txmsg.id += MSG_SET_POS_SETPOINT << NUM_NODE_ID_BITS;
+    txmsg.isExt = axis->config_.can_node_id_extended;
+    txmsg.len = 8;
+
+    uint32_t floatBytes;
+    static_assert(sizeof axis->controller_.input_vel_ == sizeof floatBytes);
+    std::memcpy(&floatBytes, &axis->controller_.input_vel_, sizeof floatBytes);
+
+    txmsg.buf[0] = floatBytes;
+    txmsg.buf[1] = floatBytes >> 8;
+    txmsg.buf[2] = floatBytes >> 16;
+    txmsg.buf[3] = floatBytes >> 24;
+
+    odCAN->write(txmsg);
 }
 
 void CANSimple::set_torque_setpoint_callback(Axis* axis, can_Message_t& msg) {
